@@ -1,18 +1,16 @@
-import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
+//Nathan J. Rowe
 import java.util.ArrayList;
 import java.util.Random;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 
 public class GamePanel extends GridPane{
      
-    private final ArrayList<Mushroom> shrooms = new ArrayList<Mushroom>();
+    private final ArrayList<String> shrooms = new ArrayList<String>();
     private Canvas[][] grid;
     private final Random posRandom = new Random();
     private final int s;
-    private Ship ship = new Ship();
+    private Ship ship;
     Controller controller;
 
     public GamePanel(Canvas field, int s) {
@@ -32,7 +30,7 @@ public class GamePanel extends GridPane{
         Canvas canvas;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++){
-                canvas = new Canvas(this.getWidth() / rows, this.getHeight() / cols);
+                canvas = new Canvas(20, 20);
                 grid[i][j] = canvas;
                 grid[i][j].setUserData("Empty");
 
@@ -44,19 +42,19 @@ public class GamePanel extends GridPane{
     }
 
     public void growShroom(int x, int y) {
-        Mushroom shroom = new Mushroom(x, y);
         //Check if a mushroom already exists at the given location
-        if (shrooms.contains(shroom)) {
-           return;
-        }
-        if(x >= 20) {
+        if(x >= this.grid.length || y >= this.grid.length) {
             return;
         }
+        if(x >= this.grid.length - 4) {
+            return;
+        }
+        if (shrooms.contains("Mushroom " + x + y)) {
+           return;
+        }
 
-        shrooms.add(shroom);
-        grid[x][y].setUserData("Mushroom");
-        this.add(shroom, y, x);
-        
+        Mushroom shroom = new Mushroom(this, x, y);
+        shrooms.add(shroom.toString());
     }
 
     private void growShrooms(int amnt) {
@@ -71,25 +69,20 @@ public class GamePanel extends GridPane{
     }
 
     public void spawnShip(int x, int y) {
-        if (grid[x][y].getUserData().equals("Mushroom")) {
+        ship = new Ship(this, x, y);
+        if (grid[x][y].getUserData().toString() != "Empty") {
+            if(grid[x][y].getUserData().toString() != "Ship") {
             spawnShip(x + 1, y);
+            }
         }
-
-        ship.setXPos(x);
-        ship.setYPos(y);
-        grid[x][y].setUserData("Ship");
-        this.add(ship, y, x);
     }
 
     public Ship getShip() {
         return ship;
     }
 
-    //Verify the key presses are occuring
-    //Move back to Controller.java
-    
-
     public Canvas[][] getCanvas() {
         return grid;
     }
+
 }

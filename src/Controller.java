@@ -1,3 +1,4 @@
+//Nathan J. Rowe
 import java.beans.EventHandler;
 
 import javafx.scene.Node;
@@ -20,7 +21,7 @@ public class Controller {
         shipControls(game.getShip());
     }  
     
-    public void shipControls(Ship ship) {
+    private void shipControls(Ship ship) {
         ship.setFocusTraversable(true);
         ship.setOnKeyPressed(e -> {
             KeyCode input = e.getCode();
@@ -38,38 +39,32 @@ public class Controller {
                 e.consume();
             }
             if(input == KeyCode.SPACE) {
-                // game.getShip().shoot();
+                Bullet bullet = new Bullet(game, ship.getXPos(), ship.getYPos());
+                move(bullet, null);
             }
         });
     }
 
-    public void move(Node node, String input) {
+    private void move(Node node, String input) {
         if (node.getClass() == Ship.class) {
             Ship ship = (Ship) node;
-            game.getCanvas()[ship.getXPos()][ship.getYPos()].setUserData("Empty");
-            game.getChildren().remove(ship);
-            if (input == "up") {
-                if (ship.getXPos() > 0) {
-                    ship.setXPos(ship.getXPos() - 1);
-                }
-            }
-            if (input == "down") {
-                if (ship.getXPos() < 24) {
-                    ship.setXPos(ship.getXPos() + 1);
-                }
-            }
-            if (input == "left") {
-                if (ship.getYPos() > 0) {
-                    ship.setYPos(ship.getYPos() - 1);
-                }
-            }
-            if (input == "right") {
-                if (ship.getYPos() < 24) {
-                    ship.setYPos(ship.getYPos() + 1);
-                }
-            }
-            game.getCanvas()[ship.getXPos()][ship.getYPos()].setUserData("Ship");
-            game.add(ship, ship.getYPos(), ship.getXPos());
+            ship.getMoves(input);
+        }
+        else if (node.getClass() == Bullet.class) {
+            Bullet bullet = (Bullet) node;
+            bullet.getMoves(null);
+        }
+        else if (node.getClass() == Centipede.class) {
+            Centipede centipede = (Centipede) node;
+            centipede.getMoves(game, null);
+        }
+        else if (node.getClass() == Spider.class) {
+            Spider spider = (Spider) node;
+            spider.getMoves(game, null);
+        }
+        else {
+            return;
         }
     }
+
 }
