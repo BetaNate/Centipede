@@ -1,3 +1,4 @@
+//Nathan J. Rowe
 import javafx.scene.shape.Circle;
 
 public class Spider extends Circle implements GameObject{

@@ -1,7 +1,8 @@
+//Nathan J. Rowe
 import javafx.scene.shape.Circle;
 
-public class centipedePart extends Circle implements GameObject{
-    public centipedePart() {
+public class centipedePiece extends Circle implements GameObject{
+    public centipedePiece() {
     }
     public boolean checkCollision() {
         return false;
