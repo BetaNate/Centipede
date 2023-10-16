@@ -1,17 +1,21 @@
 //Nathan J. Rowe
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.GridPane;
 
 public class GamePanel extends GridPane{
      
-    private final ArrayList<String> shrooms = new ArrayList<String>();
+    private final ArrayList<Mushroom> shrooms = new ArrayList<Mushroom>();
     private Canvas[][] grid;
     private final Random posRandom = new Random();
     private final int s;
     private Ship ship;
-    Controller controller;
+    private boolean bulletHit = false;
 
     public GamePanel(Canvas field, int s) {
         this.setWidth(field.getWidth());
@@ -49,12 +53,12 @@ public class GamePanel extends GridPane{
         if(x >= this.grid.length - 4) {
             return;
         }
-        if (shrooms.contains("Mushroom " + x + y)) {
+        if (shrooms.toString().contains("Mushroom " + x + y)) {
            return;
         }
 
         Mushroom shroom = new Mushroom(this, x, y);
-        shrooms.add(shroom.toString());
+        shrooms.add(shroom);
     }
 
     private void growShrooms(int amnt) {
@@ -81,8 +85,69 @@ public class GamePanel extends GridPane{
         return ship;
     }
 
+    public Mushroom getShroom(int x, int y) {
+        for (Mushroom shroom : shrooms) {
+            if(shroom.getXPos() == x && shroom.getYPos() == y) {
+                return shroom;
+            }
+        }
+        return null;
+    }
     public Canvas[][] getCanvas() {
         return grid;
     }
 
+    public void clear() {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid.length; j++){
+                grid[i][j].setUserData("Empty");
+            }
+        }
+        for(Mushroom shroom : shrooms) {
+            shroom.destroy();
+        }
+        this.getChildren().clear();
+    }
+
+    public void removeShroom(Mushroom shroom) {
+        if(shrooms.contains(shroom)) {
+            shrooms.remove(shroom);
+        }
+    }
+
+    //Removes mushrooms that have been destroyed
+    //Cleans errors from bullet collision
+    private void cleanUp() {
+        for(Mushroom shroom : shrooms) {
+            int rIndex = this.getRowIndex(shroom);
+            int cIndex = this.getColumnIndex(shroom);
+
+            if(grid[rIndex][cIndex].getUserData().toString() == "Empty") {
+                this.getChildren().remove(shroom);
+            }
+        }
+    }
+
+    //Setter and Getter to check and modify bullet collisions
+    public boolean getHit() {
+        return this.bulletHit;
+    }
+    public void setHit(boolean isHit) {
+        this.bulletHit = isHit;
+    }
+
+    public void start() {
+         AnimationTimer timer = new AnimationTimer() {
+            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
+            @Override
+            public void handle(long now) {
+                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
+                if (nowDur.minus(lastUpdate).toMillis() > 25) {
+                    lastUpdate = nowDur;  
+                    cleanUp();
+                }
+            }
+        };
+        timer.start();
+    }
 }

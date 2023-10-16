@@ -1,6 +1,11 @@
 //Nathan J. Rowe
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
+import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 
@@ -10,6 +15,9 @@ public class Ship extends Rectangle implements GameObject{
     private int lives;
     private String target;
     private final GamePanel game;
+    private final AnimationTimer timer;
+    private final AnimationTimer bulletSpawn;
+    private String input = null;
 
     public Ship(GamePanel game, int x, int y) {
         this.x = x;
@@ -23,6 +31,39 @@ public class Ship extends Rectangle implements GameObject{
         
         game.getCanvas()[x][y].setUserData("Ship");
         game.add(this, y, x);
+
+        timer = new AnimationTimer() {
+            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
+            @Override
+            public void handle(long now) {
+                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
+                if (nowDur.minus(lastUpdate).toMillis() > 30) {
+                    lastUpdate = nowDur;    
+                    getMoves(input);
+                }
+            }
+        };
+        bulletSpawn = new AnimationTimer() {
+            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
+            @Override
+            public void handle(long now) {
+                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
+                if(game.getHit() == true) {
+                    if (nowDur.minus(lastUpdate).toMillis() > 150) {
+                        lastUpdate = nowDur;  
+                        Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
+                        bullet.move();
+                    }
+                }
+                else {
+                    if (nowDur.minus(lastUpdate).toMillis() > 400) {
+                        lastUpdate = nowDur;  
+                        Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
+                        bullet.move();
+                    }
+                }
+            }
+        };
     }
 
     public Ship(GamePanel game) {
@@ -97,7 +138,22 @@ public class Ship extends Rectangle implements GameObject{
                     }
                 }
             }
+            if(input == "space") {
+                bulletSpawn.start();
+            }
+
+            this.setOnKeyReleased(e -> {
+                    timer.stop();
+                    if(e.getCode() == KeyCode.SPACE) {
+                        bulletSpawn.stop();
+                    }
+            });
             game.getCanvas()[x][y].setUserData("Ship");
             game.add(this, y, x);
+    }
+
+    public void move(String input) {
+        this.input = input;
+        timer.start();
     }
 }

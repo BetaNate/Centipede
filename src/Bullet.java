@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 public class Bullet extends Circle implements GameObject{
     private int x, y;
     private GamePanel game;
+    AnimationTimer timer;
 
     public Bullet(GamePanel game, int x, int y) {
         this.x = x;
@@ -18,8 +19,19 @@ public class Bullet extends Circle implements GameObject{
         this.setFill(Color.RED);
         this.game = game;
 
-        game.getCanvas()[x][y].setUserData("Bullet");
-        game.add(this, y, x);
+        this.timer = new AnimationTimer() {
+            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
+            @Override
+            public void handle(long now) {
+                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
+                if (nowDur.minus(lastUpdate).toMillis() > 10) {
+                    lastUpdate = nowDur;  
+                    getMoves(null);
+                }
+            }
+        };
+        
+        game.add(this, y , x);
     }
 
     public int getXPos() {
@@ -29,30 +41,37 @@ public class Bullet extends Circle implements GameObject{
         return this.y;
     }
 
-    public boolean checkCollision() {
-        return false;
-    }
     public void handleCollision(String target) {
-        return;
+        if(game.getCanvas()[x][y].getUserData() == "Mushroom") {
+            game.setHit(true);
+            Mushroom shroom = game.getShroom(x, y);
+            shroom.setHealth(shroom.getHealth() - 1);
+            shroom.destroy();
+            game.getChildren().remove(this);
+            timer.stop();
+        }
+        else if(game.getCanvas()[x][y].getUserData() == "Part"){
+            //Code to remove a centipede part
+            game.setHit(true);
+            game.getChildren().remove(this);
+            timer.stop();
+        }
+        else if(x <= 0) {
+            game.setHit(false);
+            game.getChildren().remove(this);
+            timer.stop();
+        }
     }
 
     public void getMoves(String input) {
-        return;
+            game.getChildren().remove(this);
+            x--;
+            game.add(this, y, x);
+            handleCollision(null);
     }
 
     //Bullet movement animation
     public void move() {
-        AnimationTimer timer = new AnimationTimer() {
-            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
-            @Override
-            public void handle(long now) {
-                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
-                if (nowDur.minus(lastUpdate).toMillis() > 25) {
-                    lastUpdate = nowDur;    
-                    getMoves(null);
-                }
-            }
-        };
         timer.start();
     }
 }

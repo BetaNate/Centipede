@@ -9,6 +9,7 @@ public class Mushroom extends Rectangle{
     private int x, y;
     private int health;
     private final GamePanel game;
+    private final int score = 20;
 
     public Mushroom(GamePanel game, int x, int y) {
         this.x = x;
@@ -23,10 +24,27 @@ public class Mushroom extends Rectangle{
         game.getCanvas()[x][y].setUserData("Mushroom");
         game.add(this, y, x);
     }
+
     public int getHealth() {
-        return health;
+        return this.health;
+    }
+    public void setHealth(int health) {
+        this.health = health;
+    }
+    public int getXPos() {
+        return this.x;
+    }
+    public int getYPos() {
+        return this.y;
     }
     
+    public void destroy() {
+        if(this.health <= 0) {
+            game.removeShroom(this);
+            game.getCanvas()[x][y].setUserData("Empty");
+            game.getChildren().remove(this);
+        }
+    }
     @Override
     public String toString() {
         return ("Mushroom " + this.x + " " + this.y);
