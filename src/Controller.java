@@ -25,7 +25,10 @@ public class Controller {
         root.setCenter(game);
         game.initializeField();
         shipControls(game.getShip());
+        Centipede pedle = new Centipede (game, 12, 0, 0);
+        pedle.move();
         game.start();
+        System.out.println(game.getColumnCount());
     }  
     
     private void shipControls(Ship ship) {
@@ -61,7 +64,7 @@ public class Controller {
         }
         else if (node.getClass() == Centipede.class) {
             Centipede centipede = (Centipede) node;
-            centipede.getMoves(game, null);
+            centipede.getMoves(null);
         }
         else if (node.getClass() == Spider.class) {
             Spider spider = (Spider) node;

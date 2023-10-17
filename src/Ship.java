@@ -77,6 +77,12 @@ public class Ship extends Rectangle implements GameObject{
         this.y = y;
     }
 
+    public void setLives(int life) {
+        this.lives = life;
+    }
+    public int getLives() {
+        return this.lives;
+    }
 
     public int getXPos() {
         return this.x;
@@ -150,6 +156,10 @@ public class Ship extends Rectangle implements GameObject{
             });
             game.getCanvas()[x][y].setUserData("Ship");
             game.add(this, y, x);
+    }
+
+    public void phase() {
+        game.getCanvas()[x][y].setUserData("Empty");
     }
 
     public void move(String input) {
