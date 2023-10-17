@@ -31,18 +31,6 @@ public class centipedePiece extends Circle implements GameObject{
             score = 100;
         }
         game.add(this, y, x);
-
-        this.timer = new AnimationTimer() {
-            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
-            @Override
-            public void handle(long now) {
-                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
-                if (nowDur.minus(lastUpdate).toMillis() > 50) {
-                    lastUpdate = nowDur;  
-                    getMoves(input);
-                }
-            }
-        };
     }
 
     public void setType(String type) {
@@ -104,7 +92,7 @@ public class centipedePiece extends Circle implements GameObject{
         game.setColumnIndex(this, this.y);
     }
 
-    private void advance() {
+    public void advance() {
         if(currDirection == "up") {
             if (x <= 0) {
                 currDirection = "down";
@@ -126,6 +114,13 @@ public class centipedePiece extends Circle implements GameObject{
         game.setRowIndex(this, x);
     }
 
+    public String getInput() {
+        return this.input;
+    }
+    public void setInput(String input) {
+        this.input = input;
+    }
+    
     public int getYPos() {
         return this.y;
     }
@@ -133,8 +128,10 @@ public class centipedePiece extends Circle implements GameObject{
     public int getXPos() {
         return this.x;
     }
-
-    public void move() {
-        timer.start();
+    public void setYPos(int y) {
+        this.y = y;
+    }
+    public void setXPos(int x) {
+        this.x = x;
     }
 }

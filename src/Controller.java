@@ -62,10 +62,6 @@ public class Controller {
             Bullet bullet = (Bullet) node;
             bullet.move();
         }
-        else if (node.getClass() == Centipede.class) {
-            Centipede centipede = (Centipede) node;
-            centipede.getMoves(null);
-        }
         else if (node.getClass() == Spider.class) {
             Spider spider = (Spider) node;
             spider.getMoves(game, null);
