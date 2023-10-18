@@ -42,7 +42,7 @@ public class Bullet extends Circle implements GameObject{
     }
 
     public void handleCollision(String target) {
-        if(game.getCanvas()[x][y].getUserData() == "Mushroom") {
+        if(target == "Mushroom") {
             game.setHit(true);
             Mushroom shroom = game.getShroom(x, y);
             shroom.setHealth(shroom.getHealth() - 1);
@@ -50,11 +50,25 @@ public class Bullet extends Circle implements GameObject{
             game.getChildren().remove(this);
             timer.stop();
         }
-        else if(game.getCanvas()[x][y].getUserData() == "Part"){
+        else if(target == "Centipede"){
             //Code to remove a centipede part
             game.setHit(true);
+            Centipede pede = game.getPart(x, y);
+            if(pede == null) {
+                game.getCanvas()[x][y].setUserData("Empty");
+            }
+            else {
+            centipedePiece[] centipede = pede.getCentipede();
             game.getChildren().remove(this);
+            for(int i = 0; i < centipede.length; i++) {
+                if(centipede[i].getXPos() == x && centipede[i].getYPos() == y) {
+                    pede.split(i, x, y);
+                    break;
+                }
+            }
+            game.growShroom(x, y);
             timer.stop();
+            }
         }
         else if(x <= 0) {
             game.setHit(false);
@@ -64,10 +78,15 @@ public class Bullet extends Circle implements GameObject{
     }
 
     public void getMoves(String input) {
-            game.getChildren().remove(this);
-            x--;
-            game.add(this, y, x);
-            handleCollision(null);
+            if(this.x < 0) {
+                System.out.println("Bullet out of bounds");
+                this.x = 0;
+            }
+            else {
+                this.x--;
+            }
+            game.setRowIndex(this, this.x);
+            handleCollision(game.getCanvas()[x][y].getUserData().toString());
     }
 
     //Bullet movement animation

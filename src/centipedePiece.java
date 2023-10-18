@@ -24,12 +24,13 @@ public class centipedePiece extends Circle implements GameObject{
         this.setRadius(10);
         if(type == "head") {
             this.setFill(Color.RED);
-            score = 150;
+            this.score = 150;
         }
         else {
             this.setFill(Color.GREEN);
-            score = 100;
+            this.score = 100;
         }
+        game.getCanvas()[x][y].setUserData("Centipede");
         game.add(this, y, x);
     }
 
@@ -47,15 +48,14 @@ public class centipedePiece extends Circle implements GameObject{
             }
             advance();
         }
-        if(target == "Ship") {
-            Ship ship = game.getShip();
-            ship.setLives(ship.getLives() - 1);
-            ship.phase();
+        else {
+            System.out.println("Invalid Collision");
         }
     }
 
     public void getMoves(String input) {
         input = this.input;
+        this.updateData();
         if (this.y <= 0 && input == "left") {
             this.input = "right";
             advance();
@@ -68,7 +68,7 @@ public class centipedePiece extends Circle implements GameObject{
             switch(input) {
                 case "left":
                     target = game.getCanvas()[x][y - 1].getUserData().toString();
-                    if(target != "Empty") {
+                    if(target == "Mushroom") {
                         handleCollision(target);
                     }
                     else {                
@@ -77,7 +77,7 @@ public class centipedePiece extends Circle implements GameObject{
                     break;
                 case "right":
                     target = game.getCanvas()[x][y + 1].getUserData().toString();
-                    if(target != "Empty") {
+                    if(target == "Mushroom") {
                         handleCollision(target);
                     }
                     else {                
@@ -90,6 +90,7 @@ public class centipedePiece extends Circle implements GameObject{
             }
         }
         game.setColumnIndex(this, this.y);
+        this.updateData();
     }
 
     public void advance() {
@@ -112,6 +113,21 @@ public class centipedePiece extends Circle implements GameObject{
             }
         }
         game.setRowIndex(this, x);
+    }
+
+    public void updateData() {
+        String data = game.getCanvas()[x][y].getUserData().toString();
+        if(data != "Mushroom") {
+            if(data == "Ship") {
+            game.getShip().handleCollision("Centipede");
+            }
+            else if (data == "Empty") {
+            game.getCanvas()[x][y].setUserData("Centipede");
+            }
+            else {
+            game.getCanvas()[x][y].setUserData("Empty");
+            }
+        }
     }
 
     public String getInput() {

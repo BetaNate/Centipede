@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 public class GamePanel extends GridPane{
      
     private final ArrayList<Mushroom> shrooms = new ArrayList<Mushroom>();
+    private final ArrayList<Centipede> centipedes = new ArrayList<Centipede>();
     private Canvas[][] grid;
     private final Random posRandom = new Random();
     private final int s;
@@ -50,9 +51,6 @@ public class GamePanel extends GridPane{
         if(x >= this.grid.length || y >= this.grid.length) {
             return;
         }
-        if(x >= this.grid.length - 4) {
-            return;
-        }
         if (shrooms.toString().contains("Mushroom " + x + y)) {
            return;
         }
@@ -65,7 +63,7 @@ public class GamePanel extends GridPane{
         if (amnt <= 0) {
             return;
         }
-        int x = posRandom.nextInt(25);
+        int x = posRandom.nextInt(25 - 4);
         int y = posRandom.nextInt(25);
 
         growShroom(x, y);
@@ -79,6 +77,32 @@ public class GamePanel extends GridPane{
             spawnShip(x + 1, y);
             }
         }
+    }
+
+    public Centipede spawnCentipede(int x, int y, int length) {
+        if (length <= 0) {
+            return null;
+        }
+        Centipede centipede = new Centipede(this, length, x, y);
+        centipedes.add(centipede);
+        return centipede;
+    }
+
+    public ArrayList<Centipede> getCentipedes() {
+        return centipedes;
+    }
+
+    public Centipede getPart(int x, int y){
+        for(Centipede centipede : centipedes) {
+            centipedePiece[] centipedeArr = centipede.getCentipede();
+            int len = centipedeArr.length;
+            for(int i = 0; i < len; i++) {
+                if(centipedeArr[i].getXPos() == x && centipedeArr[i].getYPos() == y) {
+                    return centipede;
+                }
+            }
+        }
+        return null;
     }
 
     public Ship getShip() {
@@ -106,6 +130,9 @@ public class GamePanel extends GridPane{
         for(Mushroom shroom : shrooms) {
             shroom.destroy();
         }
+        for(Centipede centipede : centipedes) {
+            centipedes.remove(centipede);
+        }
         this.getChildren().clear();
     }
 
@@ -116,7 +143,7 @@ public class GamePanel extends GridPane{
     }
 
     //Removes mushrooms that have been destroyed
-    //Cleans errors from bullet collision
+    //Cleans errors from collisions
     private void cleanUp() {
         for(Mushroom shroom : shrooms) {
             int rIndex = this.getRowIndex(shroom);
@@ -126,6 +153,7 @@ public class GamePanel extends GridPane{
                 this.getChildren().remove(shroom);
             }
         }
+        
     }
 
     //Setter and Getter to check and modify bullet collisions
@@ -145,6 +173,9 @@ public class GamePanel extends GridPane{
                 if (nowDur.minus(lastUpdate).toMillis() > 25) {
                     lastUpdate = nowDur;  
                     cleanUp();
+                    if(centipedes.size() == 0) {
+                        spawnCentipede(0, 0, 12);
+                    }
                 }
             }
         };

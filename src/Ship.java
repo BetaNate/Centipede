@@ -95,6 +95,10 @@ public class Ship extends Rectangle implements GameObject{
         if (target == "Mushroom") {
             return;
         }
+        if(target == "Centipede") {
+            System.out.println("Collision!");
+            this.phase();
+        }
     }
 
     public void getMoves(String input) {

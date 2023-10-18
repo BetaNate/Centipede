@@ -17,7 +17,7 @@ public class Controller {
     private GamePanel game;
     private Score score;
     KeyCode input = null;
-    AnimationTimer bulletSpawn;
+    AnimationTimer centipedeSpawn;
 
     public Controller(BorderPane root, Canvas field) {
         this.game = new GamePanel(field, 80);
@@ -25,8 +25,6 @@ public class Controller {
         root.setCenter(game);
         game.initializeField();
         shipControls(game.getShip());
-        Centipede pedle = new Centipede (game, 12, 0, 0);
-        pedle.move();
         game.start();
         System.out.println(game.getColumnCount());
     }  
