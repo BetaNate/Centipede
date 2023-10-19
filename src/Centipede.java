@@ -112,6 +112,14 @@ public class Centipede extends Node{
         //timer.stop();
     }
 
+    public int getScore(int x, int y) {
+        for(int i = 0; i < centipede.length; i++) {
+            if(centipede[i].getXPos() == x && centipede[i].getYPos() == y) {
+                return centipede[i].getScore();
+            }
+        }
+        return 0;
+    }
     public void phase() {
         for(int i = 0; i < centipede.length; i++) {
             int currX = centipede[i].getXPos();

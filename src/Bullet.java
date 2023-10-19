@@ -42,6 +42,7 @@ public class Bullet extends Circle implements GameObject{
     }
 
     public void handleCollision(String target) {
+        int score = 0;
         if(target == "Mushroom") {
             game.setHit(true);
             Mushroom shroom = game.getShroom(x, y);
@@ -49,11 +50,12 @@ public class Bullet extends Circle implements GameObject{
             shroom.destroy();
             game.getChildren().remove(this);
             timer.stop();
+            score = shroom.getScore();
         }
         else if(target == "Centipede"){
             //Code to remove a centipede part
             game.setHit(true);
-            Centipede pede = game.getPart(x, y);
+            Centipede pede = game.getCentipede(x, y);
             if(pede == null) {
                 game.getCanvas()[x][y].setUserData("Empty");
             }
@@ -66,6 +68,7 @@ public class Bullet extends Circle implements GameObject{
                     break;
                 }
             }
+            score = pede.getScore(x, y);
             game.growShroom(x, y);
             timer.stop();
             }
@@ -75,6 +78,7 @@ public class Bullet extends Circle implements GameObject{
             game.getChildren().remove(this);
             timer.stop();
         }
+        game.addScore(score);
     }
 
     public void getMoves(String input) {
