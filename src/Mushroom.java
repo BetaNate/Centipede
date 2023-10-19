@@ -9,7 +9,7 @@ public class Mushroom extends Rectangle{
     private int x, y;
     private int health;
     private final GamePanel game;
-    private final int score = 20;
+    private int score = 0;
 
     public Mushroom(GamePanel game, int x, int y) {
         this.x = x;
@@ -37,9 +37,13 @@ public class Mushroom extends Rectangle{
     public int getYPos() {
         return this.y;
     }
+    public int getScore() {
+        return this.score;
+    }
     
     public void destroy() {
         if(this.health <= 0) {
+            this.score = 20;
             game.removeShroom(this);
             game.getCanvas()[x][y].setUserData("Empty");
             game.getChildren().remove(this);

@@ -16,8 +16,10 @@ public class GamePanel extends GridPane{
     private final Random posRandom = new Random();
     private final int s;
     private Ship ship;
+    private int score = 0;
     private boolean bulletHit = false;
     AnimationTimer update;
+    int rows, cols;
 
     public GamePanel(Canvas field, int s) {
         this.setWidth(field.getWidth());
@@ -30,8 +32,8 @@ public class GamePanel extends GridPane{
     }
 
     public void initializeField() {
-        int rows = 25;
-        int cols = 25;
+        rows = 25;
+        cols = 25;
         grid = new Canvas[rows][cols];
         Canvas canvas;
         for (int i = 0; i < rows; i++) {
@@ -93,7 +95,7 @@ public class GamePanel extends GridPane{
         return centipedes;
     }
 
-    public Centipede getPart(int x, int y){
+    public Centipede getCentipede(int x, int y){
         for(Centipede centipede : centipedes) {
             centipedePiece[] centipedeArr = centipede.getCentipede();
             int len = centipedeArr.length;
@@ -108,6 +110,13 @@ public class GamePanel extends GridPane{
 
     public Ship getShip() {
         return ship;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
+    public void addScore(int score) {
+        this.score += score;
     }
 
     public Mushroom getShroom(int x, int y) {
@@ -155,6 +164,30 @@ public class GamePanel extends GridPane{
             }
         }
         
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                Canvas canvas = grid[i][j];
+                String data = canvas.getUserData().toString();
+                if(data != "Empty") {
+                    switch(data) {
+                        case "Centipede":
+                            if(getCentipede(i, j) == null) {
+                                canvas.setUserData("Empty");
+                            }
+                            break;
+                        case "Ship": 
+                            int x = ship.getXPos();
+                            int y = ship.getYPos();
+                            if(x != i || y != j) {
+                                canvas.setUserData("Empty");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     //Setter and Getter to check and modify bullet collisions
@@ -170,7 +203,7 @@ public class GamePanel extends GridPane{
             centipede.disable(val);
         }
     }
-    public void start() {
+    public void start(Menu menu) {
          AnimationTimer timer = new AnimationTimer() {
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
             @Override
@@ -179,6 +212,7 @@ public class GamePanel extends GridPane{
                 if (nowDur.minus(lastUpdate).toMillis() > 25) {
                     lastUpdate = nowDur;  
                     cleanUp();
+                    menu.update();
                     if(centipedes.size() == 0) {
                         spawnCentipede(0, 0, 12);
                     }
@@ -202,7 +236,6 @@ public class GamePanel extends GridPane{
                     count++;
                     System.out.println(count);
                 }
-                
             }
         };
         timer.start();

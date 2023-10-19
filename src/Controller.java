@@ -15,18 +15,18 @@ import javafx.scene.input.KeyCodeCombination;
 public class Controller {
 
     private GamePanel game;
-    private Score score;
+    private Menu menu;
     KeyCode input = null;
     AnimationTimer centipedeSpawn;
 
     public Controller(BorderPane root, Canvas field) {
         this.game = new GamePanel(field, 80);
-        this.score = new Score();
         root.setCenter(game);
         game.initializeField();
         shipControls(game.getShip());
-        game.start();
-        System.out.println(game.getColumnCount());
+        this.menu = new Menu(game);
+        root.setTop(menu);
+        game.start(menu);
     }  
     
     private void shipControls(Ship ship) {

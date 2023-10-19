@@ -4,6 +4,7 @@ import java.time.temporal.ChronoUnit;
 
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
@@ -18,6 +19,7 @@ public class Ship extends Rectangle implements GameObject{
     private final AnimationTimer timer;
     private final AnimationTimer bulletSpawn;
     private String input = null;
+    Canvas canvas;
 
     public Ship(GamePanel game, int x, int y) {
         this.x = x;
@@ -96,8 +98,9 @@ public class Ship extends Rectangle implements GameObject{
             return;
         }
         if(target == "Centipede") {
-            System.out.println("Collision!");
+            this.lives--;
             game.getCanvas()[x][y].setUserData("Empty");
+            canvas.setUserData("Empty");
             game.phase(true);
             game.update.start();
         }
@@ -108,7 +111,8 @@ public class Ship extends Rectangle implements GameObject{
             game.getChildren().remove(this);
             if (input == "up") {
                 if (x > 5) {
-                    target = game.getCanvas()[x - 1][y].getUserData().toString();
+                    canvas = game.getCanvas()[x-1][y];
+                    target = canvas.getUserData().toString();
                     if(target == "Empty") {
                         x--;
                     }
@@ -119,7 +123,8 @@ public class Ship extends Rectangle implements GameObject{
             }
             if (input == "down") {
                 if (x < 24) {
-                    target = game.getCanvas()[x + 1][y].getUserData().toString();
+                    canvas = game.getCanvas()[x + 1][y];
+                    target = canvas.getUserData().toString();
                     if(target == "Empty") {
                         x++;
                     }
@@ -130,7 +135,8 @@ public class Ship extends Rectangle implements GameObject{
             }
             if (input == "left") {
                 if (y > 0) {
-                    target = game.getCanvas()[x][y - 1].getUserData().toString();
+                    canvas = game.getCanvas()[x][y - 1];
+                    target = canvas.getUserData().toString();
                     if(target == "Empty") {
                       y--;
                     }
@@ -141,7 +147,8 @@ public class Ship extends Rectangle implements GameObject{
             }
             if (input == "right") {
                 if (y < 24) {
-                    target = game.getCanvas()[x][y + 1].getUserData().toString();
+                    canvas = game.getCanvas()[x][y + 1];
+                    target = canvas.getUserData().toString();
                     if(target == "Empty") {
                         y++;
                     }
