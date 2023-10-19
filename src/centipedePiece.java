@@ -15,6 +15,7 @@ public class centipedePiece extends Circle implements GameObject{
     private int score;
     private String input = "right";
     AnimationTimer timer;
+    private boolean disabled = false;
 
     public centipedePiece(GamePanel game, int x, int y, String type) {
         this.x = x;
@@ -115,11 +116,19 @@ public class centipedePiece extends Circle implements GameObject{
         game.setRowIndex(this, x);
     }
 
+    public void disable(boolean val) {
+        this.disabled = val;
+    }
+
     public void updateData() {
         String data = game.getCanvas()[x][y].getUserData().toString();
         if(data != "Mushroom") {
-            if(data == "Ship") {
-            game.getShip().handleCollision("Centipede");
+            if(disabled == true) {
+                game.getCanvas()[x][y].setUserData("Empty");
+            }
+            else if(data == "Ship") {
+                game.getShip().handleCollision("Centipede");
+                game.getCanvas()[x][y].setUserData("Empty");
             }
             else if (data == "Empty") {
             game.getCanvas()[x][y].setUserData("Centipede");

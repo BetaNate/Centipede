@@ -17,6 +17,7 @@ public class GamePanel extends GridPane{
     private final int s;
     private Ship ship;
     private boolean bulletHit = false;
+    AnimationTimer update;
 
     public GamePanel(Canvas field, int s) {
         this.setWidth(field.getWidth());
@@ -164,6 +165,11 @@ public class GamePanel extends GridPane{
         this.bulletHit = isHit;
     }
 
+    public void phase(boolean val) {
+        for(Centipede centipede : centipedes) {
+            centipede.disable(val);
+        }
+    }
     public void start() {
          AnimationTimer timer = new AnimationTimer() {
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
@@ -177,6 +183,26 @@ public class GamePanel extends GridPane{
                         spawnCentipede(0, 0, 12);
                     }
                 }
+                
+            }
+        };
+
+        update = new AnimationTimer() {
+            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
+            int count = 0;
+            @Override
+            public void handle(long now) {
+                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
+                if (nowDur.minus(lastUpdate).toMillis() > 4000) {
+                    if(count >= 300) {
+                        phase(false);
+                        count = 0;
+                        this.stop();
+                    }
+                    count++;
+                    System.out.println(count);
+                }
+                
             }
         };
         timer.start();

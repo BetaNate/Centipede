@@ -62,6 +62,11 @@ public class Centipede extends Node{
         return centipede;
     }
 
+    public void disable(boolean val) {
+        for(int i = 0; i < centipede.length; i++) {
+            centipede[i].disable(val);
+        }
+    }
     public void split(int index, int x, int y) {
         timer.stop();
         this.x = x;
@@ -101,12 +106,19 @@ public class Centipede extends Node{
 
     public void clear() {
         for(int i = 0; i < centipede.length; i++) {
-            int currX = centipede[i].getXPos();
-            int currY = centipede[i].getYPos();
-            game.getCanvas()[currX][currY].setUserData("Empty");
+            phase();
             game.getChildren().remove(centipede[i]);
         }
         //timer.stop();
+    }
+
+    public void phase() {
+        for(int i = 0; i < centipede.length; i++) {
+            int currX = centipede[i].getXPos();
+            int currY = centipede[i].getYPos();
+            game.getCanvas()[currX][currY].setUserData("Empty");
+            game.getCanvas()[currX][currY].setUserData("Empty");
+        }
     }
     //Method to move centipede
     //Centipede will spawn all parts at same time, then move one at a time

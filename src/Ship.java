@@ -97,7 +97,9 @@ public class Ship extends Rectangle implements GameObject{
         }
         if(target == "Centipede") {
             System.out.println("Collision!");
-            this.phase();
+            game.getCanvas()[x][y].setUserData("Empty");
+            game.phase(true);
+            game.update.start();
         }
     }
 
@@ -162,8 +164,8 @@ public class Ship extends Rectangle implements GameObject{
             game.add(this, y, x);
     }
 
-    public void phase() {
-        game.getCanvas()[x][y].setUserData("Empty");
+    public void unphase() {
+        this.setVisible(true);
     }
 
     public void move(String input) {
