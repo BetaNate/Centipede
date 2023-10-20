@@ -1,8 +1,10 @@
 //Nathan J. Rowe
+
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
 
-public class Spider extends Circle implements GameObject{
-    public Spider() {
+public class Flea extends ImageView implements GameObject{
+    public Flea() {
     }
     public boolean checkCollision() {
         return false;

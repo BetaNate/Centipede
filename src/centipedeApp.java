@@ -15,9 +15,10 @@ public class centipedeApp extends Application{
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Centipede");
         Canvas field = new Canvas(80, 300);
+        root.getStyleClass().add("background-black");
         Controller controller = new Controller(root, field);
         Scene scene = new Scene(root);
-
+        scene.getStylesheets().add("resources/css/style.css");
         primaryStage.setMinHeight(400);
         primaryStage.setMinWidth(100); 
         primaryStage.setResizable(false);

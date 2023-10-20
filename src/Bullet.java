@@ -3,20 +3,20 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Circle;
-import javafx.scene.paint.Color;
 
-public class Bullet extends Circle implements GameObject{
+
+public class Bullet extends ImageView implements GameObject{
     private int x, y;
     private GamePanel game;
     AnimationTimer timer;
+    private Image bullet = new Image("resources/images/bullet.png");
 
     public Bullet(GamePanel game, int x, int y) {
         this.x = x;
         this.y = y;
-        this.setRadius(5);
-        this.setFill(Color.RED);
+        this.setImage(bullet);
         this.game = game;
 
         this.timer = new AnimationTimer() {
@@ -31,7 +31,7 @@ public class Bullet extends Circle implements GameObject{
             }
         };
         
-        game.add(this, y , x);
+        game.add(this, y , x - 1);
     }
 
     public int getXPos() {

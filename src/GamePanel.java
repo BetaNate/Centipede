@@ -1,10 +1,7 @@
 //Nathan J. Rowe
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.GridPane;
 
@@ -18,7 +15,6 @@ public class GamePanel extends GridPane{
     private Ship ship;
     private int score = 0;
     private boolean bulletHit = false;
-    AnimationTimer update;
     int rows, cols;
 
     public GamePanel(Canvas field, int s) {
@@ -137,12 +133,8 @@ public class GamePanel extends GridPane{
                 grid[i][j].setUserData("Empty");
             }
         }
-        for(Mushroom shroom : shrooms) {
-            shroom.destroy();
-        }
-        for(Centipede centipede : centipedes) {
-            centipedes.remove(centipede);
-        }
+        shrooms.clear();
+        centipedes.clear();
         this.getChildren().clear();
     }
 
@@ -154,7 +146,7 @@ public class GamePanel extends GridPane{
 
     //Removes mushrooms that have been destroyed
     //Cleans errors from collisions
-    private void cleanUp() {
+    public void cleanUp() {
         for(Mushroom shroom : shrooms) {
             int rIndex = this.getRowIndex(shroom);
             int cIndex = this.getColumnIndex(shroom);
@@ -202,42 +194,5 @@ public class GamePanel extends GridPane{
         for(Centipede centipede : centipedes) {
             centipede.disable(val);
         }
-    }
-    public void start(Menu menu) {
-         AnimationTimer timer = new AnimationTimer() {
-            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
-            @Override
-            public void handle(long now) {
-                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
-                if (nowDur.minus(lastUpdate).toMillis() > 25) {
-                    lastUpdate = nowDur;  
-                    cleanUp();
-                    menu.update();
-                    if(centipedes.size() == 0) {
-                        spawnCentipede(0, 0, 12);
-                    }
-                }
-                
-            }
-        };
-
-        update = new AnimationTimer() {
-            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
-            int count = 0;
-            @Override
-            public void handle(long now) {
-                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
-                if (nowDur.minus(lastUpdate).toMillis() > 4000) {
-                    if(count >= 300) {
-                        phase(false);
-                        count = 0;
-                        this.stop();
-                    }
-                    count++;
-                    System.out.println(count);
-                }
-            }
-        };
-        timer.start();
     }
 }

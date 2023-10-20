@@ -14,7 +14,7 @@ public class Centipede extends Node{
     private final GamePanel game;
     private String target;
     private String input = "right";
-    private AnimationTimer timer;
+    AnimationTimer timer;
     centipedePiece head;
 
     public Centipede(GamePanel game, int size, int x, int y) {
@@ -32,6 +32,7 @@ public class Centipede extends Node{
                     lastUpdate = nowDur;  
                       
                     for(int i = centipede.length - 1; i >= 1; i--) {
+                        centipede[i].setInput(centipede[i - 1].getInput());
                         centipede[i].updateData();
                         centipede[i].setXPos(centipede[i - 1].getXPos());
                         centipede[i].setYPos(centipede[i - 1].getYPos());

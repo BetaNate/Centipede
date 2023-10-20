@@ -5,12 +5,13 @@ import java.time.temporal.ChronoUnit;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 
-public class Ship extends Rectangle implements GameObject{
+public class Ship extends ImageView implements GameObject{
  
     private int x, y;
     private int lives;
@@ -20,16 +21,14 @@ public class Ship extends Rectangle implements GameObject{
     private final AnimationTimer bulletSpawn;
     private String input = null;
     Canvas canvas;
+    private Image ship = new Image("resources/images/ship.png");
 
     public Ship(GamePanel game, int x, int y) {
         this.x = x;
         this.y = y;
         this.lives = 3;
         this.game = game;
-
-        this.setWidth(20);
-        this.setHeight(20);
-        this.setFill(Color.BLUE);
+        this.setImage(ship);
         
         game.getCanvas()[x][y].setUserData("Ship");
         game.add(this, y, x);
@@ -102,7 +101,6 @@ public class Ship extends Rectangle implements GameObject{
             game.getCanvas()[x][y].setUserData("Empty");
             canvas.setUserData("Empty");
             game.phase(true);
-            game.update.start();
         }
     }
 

@@ -3,10 +3,13 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class centipedePiece extends Circle implements GameObject{
+public class centipedePiece extends ImageView implements GameObject{
     private int x, y;
     private String type;
     private String target;
@@ -16,19 +19,28 @@ public class centipedePiece extends Circle implements GameObject{
     private String input = "right";
     AnimationTimer timer;
     private boolean disabled = false;
+    private int currImage = 0;
+
+    Image head1 = new Image("resources/images/head1.png");
+    Image head2 = new Image("resources/images/head2.png");
+    Image head3 = new Image("resources/images/head3.png");
+    Image[] headImages = new Image[] {head1, head2, head3};
+    Image body1 = new Image("resources/images/body1.png");
+    Image body2 = new Image("resources/images/body2.png");
+    Image body3 = new Image("resources/images/body3.png");
+    Image[] bodyImages = new Image[] {body1, body2, body3};
 
     public centipedePiece(GamePanel game, int x, int y, String type) {
         this.x = x;
         this.y = y;
         this.type = type;
         this.game = game;
-        this.setRadius(10);
         if(type == "head") {
-            this.setFill(Color.RED);
+            this.setImage(headImages[0]);
             this.score = 150;
         }
         else {
-            this.setFill(Color.GREEN);
+            this.setImage(bodyImages[0]);
             this.score = 100;
         }
         game.getCanvas()[x][y].setUserData("Centipede");
@@ -117,6 +129,12 @@ public class centipedePiece extends Circle implements GameObject{
     }
 
     public void disable(boolean val) {
+        if(val == true) {
+            this.setEffect(new ColorAdjust(0, 0, -0.5, 0));
+        }
+        else {
+            this.setEffect(null);
+        }
         this.disabled = val;
     }
 
@@ -126,6 +144,26 @@ public class centipedePiece extends Circle implements GameObject{
 
     public void updateData() {
         String data = game.getCanvas()[x][y].getUserData().toString();
+        if(currImage >= 2) {
+            currImage = 0;
+        }
+        else {
+            currImage++;
+        }
+        if(type == "head") {
+            this.setImage(headImages[currImage]);
+        }
+        else {
+            this.setImage(bodyImages[currImage]);
+        }
+        switch(input) {
+            case "left":
+                this.setRotate(0);
+                break;
+            case "right":
+                this.setRotate(180);
+                break;
+        }
         if(data != "Mushroom") {
             if(disabled == true) {
                 game.getCanvas()[x][y].setUserData("Empty");
