@@ -73,6 +73,20 @@ public class Bullet extends ImageView implements GameObject{
             timer.stop();
             }
         }
+        else if(target == "Flea") {
+            game.setHit(true);
+            Flea flea = game.getFlea(x, y);
+            game.removeFlea(flea);
+            game.getChildren().remove(this);
+            timer.stop();
+            score = flea.getScore();
+        }
+        else if(target == "Spider") {
+            game.setHit(true);
+            game.getChildren().remove(this);
+            timer.stop();
+            score = 800;
+        }
         else if(x <= 0) {
             game.setHit(false);
             game.getChildren().remove(this);

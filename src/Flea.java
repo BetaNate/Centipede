@@ -12,6 +12,7 @@ public class Flea extends ImageView implements GameObject{
     private final GamePanel game;
     AnimationTimer timer;
     private final Image fleaImage = new Image("/resources/images/flea.png");
+    private final int score = 200;
 
     public Flea(GamePanel game, int x, int y) {
         this.game = game;
@@ -24,7 +25,7 @@ public class Flea extends ImageView implements GameObject{
             @Override
             public void handle(long now) {
                 Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
-                if (nowDur.minus(lastUpdate).toMillis() > 10) {
+                if (nowDur.minus(lastUpdate).toMillis() > 50) {
                     lastUpdate = nowDur;  
                     getMoves(null);
                 }
@@ -41,21 +42,35 @@ public class Flea extends ImageView implements GameObject{
             game.getShip().handleCollision("Centipede");
         }
     }
+
     public void getMoves(String input) {
-        if(x >= game.getRowCount()) {
-            game.getChildren().remove(this);
-            return;
+        if(game.getCanvas()[this.x][this.y].getUserData().toString() == "Flea") {
+            game.getCanvas()[this.x][this.y].setUserData("Empty");
         }
         if(game.getCanvas()[x][y].getUserData().toString() == "Ship") {
             handleCollision("Ship");
         }
-        if(initX - x > 3) {
-            initX = x;
+        if((this.x - this.initX) >= 2) {
             if(game.getCanvas()[x][y].getUserData().toString() == "Empty") {
                 game.growShroom(x, y);
             }
+            this.initX = this.x;
         }
-        this.x++; 
+        if(x >= game.getRowCount() - 1) {
+            game.removeFlea(this);
+            timer.stop();
+            return;
+        }
+
+        this.x++;
+
+        game.setRowIndex(this, this.x);
+        if(game.getCanvas()[this.x][this.y].getUserData().toString() == "Empty") {
+            game.getCanvas()[this.x][this.y].setUserData("Flea");
+        }
+        else {
+            return;
+        }
     }
 
     public int getYPos() {
@@ -63,6 +78,10 @@ public class Flea extends ImageView implements GameObject{
     } 
     public int getXPos() {
         return this.x;
+    }
+
+    public int getScore() {
+        return this.score;
     }
 
     public void move(boolean input) {

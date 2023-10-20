@@ -18,7 +18,7 @@ public class Ship extends ImageView implements GameObject{
     private String target;
     private final GamePanel game;
     private final AnimationTimer timer;
-    private final AnimationTimer bulletSpawn;
+    private boolean firing = false;
     private String input = null;
     Canvas canvas;
     private Image ship = new Image("resources/images/ship.png");
@@ -35,32 +35,29 @@ public class Ship extends ImageView implements GameObject{
 
         timer = new AnimationTimer() {
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
+            private Duration lastFire = Duration.of(0, ChronoUnit.NANOS);
             @Override
             public void handle(long now) {
                 Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
+                Duration fireDur = Duration.of(now, ChronoUnit.NANOS);
                 if (nowDur.minus(lastUpdate).toMillis() > 30) {
                     lastUpdate = nowDur;    
                     getMoves(input);
                 }
-            }
-        };
-        bulletSpawn = new AnimationTimer() {
-            private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
-            @Override
-            public void handle(long now) {
-                Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
-                if(game.getHit() == true) {
-                    if (nowDur.minus(lastUpdate).toMillis() > 150) {
-                        lastUpdate = nowDur;  
-                        Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
-                        bullet.move();
+                if(firing) {
+                    if(game.getHit()) {
+                        if (fireDur.minus(lastFire).toMillis() > 150) {
+                            lastFire = fireDur;  
+                            Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
+                            bullet.move();
+                        }
                     }
-                }
-                else {
-                    if (nowDur.minus(lastUpdate).toMillis() > 400) {
-                        lastUpdate = nowDur;  
-                        Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
-                        bullet.move();
+                    else {
+                        if (fireDur.minus(lastFire).toMillis() > 300) {
+                            lastFire = fireDur;  
+                            Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
+                            bullet.move();
+                        }
                     }
                 }
             }
@@ -156,13 +153,13 @@ public class Ship extends ImageView implements GameObject{
                 }
             }
             if(input == "space") {
-                bulletSpawn.start();
+                firing = true;
             }
 
             this.setOnKeyReleased(e -> {
-                    timer.stop();
+                    this.input = null;
                     if(e.getCode() == KeyCode.SPACE) {
-                        bulletSpawn.stop();
+                        firing = false;
                     }
             });
             game.getCanvas()[x][y].setUserData("Ship");

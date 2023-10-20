@@ -9,6 +9,7 @@ public class GamePanel extends GridPane{
     //ArrayLists for data on board
     private final ArrayList<Mushroom> shrooms = new ArrayList<Mushroom>();
     private final ArrayList<Centipede> centipedes = new ArrayList<Centipede>();
+    private final ArrayList<Flea> fleas = new ArrayList<Flea>();
     //Play field
     private Canvas[][] grid;
     //Random position generator
@@ -138,6 +139,26 @@ public class GamePanel extends GridPane{
         return null;
     }
 
+    public void spawnFlea() {
+        int y = posRandom.nextInt(cols - 1);
+        fleas.add(new Flea(this, 0, y));
+    }
+
+    public Flea getFlea(int x, int y) {
+        for(Flea flea : fleas) {
+            if(flea.getXPos() == x && flea.getYPos() == y) {
+                return flea;
+            }
+        }
+        return null;
+    }
+    public void removeFlea(Flea flea) {
+        if(fleas.contains(flea)) {
+            this.getChildren().remove(flea);
+            grid[flea.getXPos()][flea.getYPos()].setUserData("Empty");
+            fleas.remove(flea);
+        }
+    }
 
     public int getScore() {
         return this.score;

@@ -144,6 +144,7 @@ public class Controller {
         public void start(BorderPane root) {
          update = new AnimationTimer() {
             int currLives = ship.getLives();
+            int counter = 0;
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
             @Override
             public void handle(long now) {
@@ -158,22 +159,28 @@ public class Controller {
                     }
                     else {
                         if(ship.getLives() != currLives) {
-                        currLives = ship.getLives();
-                        respawn.start();
-                    }
+                            currLives = ship.getLives();
+                            respawn.start();
+                        }
                     //Add life
-                    if(game.getScore() == 12000) {
-                        ship.setLives(ship.getLives() + 1);
-                    }
+                        if(game.getScore() == 12000) {
+                            ship.setLives(ship.getLives() + 1);
+                        }
                     //Run continuous cleanup on board
                     //Update menu display
-                    game.cleanUp();
-                    menu.update();
+                        game.cleanUp();
+                        menu.update();
                     //If no centipedes/ spawn a new centipede
-                    if(game.getCentipedes().isEmpty()) {
-                        game.spawnCentipede(0, 0, 12);
+                        if(game.getCentipedes().isEmpty()) {
+                            game.spawnCentipede(0, 0, 12);
+                        }
+                    //Spawn Flea every 30 seconds
+                        if(counter >= 1500) {
+                            game.spawnFlea();
+                            counter = 0;
+                        }
+                        counter++;
                     }
-                }
                 }
                 
             }
