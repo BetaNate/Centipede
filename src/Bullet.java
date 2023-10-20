@@ -1,17 +1,19 @@
-//Nathan J. Rowe
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-
-import javafx.animation.AnimationTimer;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
-
 /*
+ * Author: Nathan J. Rowe
  * Bullet class
  * Moves up the screen until it hits something
  * Is a GameObject
  */
+
+//For animation timer
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import javafx.animation.AnimationTimer;
+//For Image
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+
 public class Bullet extends ImageView implements GameObject{
     //Bullet position
     private int x, y;
@@ -22,6 +24,11 @@ public class Bullet extends ImageView implements GameObject{
     //Bullet image
     private final Image bullet = new Image("resources/images/bullet.png");
 
+/*
+ * ---------------------------
+ *        Constructor
+ * ---------------------------
+ */
     public Bullet(GamePanel game, int x, int y) {
         //Set properties
         this.x = x;
@@ -93,6 +100,7 @@ public class Bullet extends ImageView implements GameObject{
         if (target != "Empty") {
             //Set hit to true
             game.setHit(true); 
+            //If Mushroom, reduce health
             if(target == "Mushroom") {
                 //Get mushroom
                 Mushroom shroom = game.getShroom(x, y);
@@ -103,24 +111,33 @@ public class Bullet extends ImageView implements GameObject{
                 //Get score
                 score = shroom.getScore();
             }
+            //If Centipede, split centipede
             else if(target == "Centipede"){
                 //Code to remove a centipede part
                 Centipede pede = game.getCentipede(x, y);
+                //If pede is null, then centipede is dead
+                //Set cell to empty to prevent unwanted collisions
                 if(pede == null) {
                     game.getCanvas()[x][y].setUserData("Empty");
                 }
                 else {
+                    //Get array of centipede parts
                     centipedePiece[] centipede = pede.getCentipede();
+                    //Loop through array to find the centipede part that was hit
                     for(int i = 0; i < centipede.length; i++) {
                         if(centipede[i].getXPos() == x && centipede[i].getYPos() == y) {
+                            //Split centipede at index
                             pede.split(i, x, y);
                             break;
                         }
                     }
-                    score = pede.getScore(x, y); 
+                    //Get score
+                    score = pede.getScore(x, y);
+                    //Grow mushroom at location
                     game.growShroom(x, y);
                 }
             }
+            //If Flea, remove flea
             else if(target == "Flea") {
                 Flea flea = game.getFlea(x, y);
                 flea.move(false);
