@@ -152,7 +152,7 @@ public class Controller {
                 Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
                 if (nowDur.minus(lastUpdate).toMillis() > 25) {
                     lastUpdate = nowDur; 
-                    int scoreCounter = game.getScore();
+                    int scoreCounter = game.getScore() - prev;
                     //Check if no lives
                     //Else, update lives
                     checkDeath(root);
@@ -165,15 +165,10 @@ public class Controller {
                             respawn.start();
                         }
                     //Add life
-                        if(scoreCounter != 0 && (scoreCounter % 12000) == 0) {
-                            if(scoreCounter != prev) {
-                                prev = scoreCounter;
+                        if(scoreCounter >= 12000) {
+                                prev = game.getScore();
                                 currLives = ship.getLives() + 1;
                                 ship.setLives(currLives);
-                            }
-                            else {
-                                return;
-                            }
                         }
                     //Run continuous cleanup on board
                     //Update menu display
@@ -184,7 +179,7 @@ public class Controller {
                             game.spawnCentipede(0, 0, 12);
                         }
                     //Spawn Flea every 30 seconds
-                        if(counter >= 1500) {
+                        if(counter >= 1200) {
                             game.spawnFlea();
                             counter = 0;
                         }

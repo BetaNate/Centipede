@@ -68,7 +68,7 @@ public class Bullet extends ImageView implements GameObject{
                     break;
                 }
             }
-            score = pede.getScore(x, y);
+            score = pede.getScore(x, y); 
             game.growShroom(x, y);
             timer.stop();
             }
@@ -76,10 +76,11 @@ public class Bullet extends ImageView implements GameObject{
         else if(target == "Flea") {
             game.setHit(true);
             Flea flea = game.getFlea(x, y);
+            flea.move(false);
             game.removeFlea(flea);
             game.getChildren().remove(this);
-            timer.stop();
             score = flea.getScore();
+            timer.stop();
         }
         else if(target == "Spider") {
             game.setHit(true);
