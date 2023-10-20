@@ -20,7 +20,7 @@ public class GamePanel extends GridPane{
     private Ship ship;
     private boolean bulletHit = false;
     //Current Score
-    private int score = 0;
+    private long score = 0;
     //Game size information
     private final int rows = 25;
     private final int cols = 25;
@@ -160,7 +160,7 @@ public class GamePanel extends GridPane{
         }
     }
 
-    public int getScore() {
+    public long getScore() {
         return this.score;
     }
 

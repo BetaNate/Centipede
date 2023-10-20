@@ -48,15 +48,15 @@ public class Ship extends ImageView implements GameObject{
                     if(game.getHit()) {
                         if (fireDur.minus(lastFire).toMillis() > 150) {
                             lastFire = fireDur;  
-                            Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
-                            bullet.move();
+                            GameObject bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
+                            bullet.move(true);
                         }
                     }
                     else {
                         if (fireDur.minus(lastFire).toMillis() > 300) {
                             lastFire = fireDur;  
                             Bullet bullet = new Bullet(game, game.getShip().getXPos(), game.getShip().getYPos());
-                            bullet.move();
+                            bullet.move(true);
                         }
                     }
                 }
@@ -173,5 +173,11 @@ public class Ship extends ImageView implements GameObject{
     public void move(String input) {
         this.input = input;
         timer.start();
+    }
+
+    @Override
+    public void move(boolean val) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'move'");
     }
 }

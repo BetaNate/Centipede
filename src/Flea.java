@@ -84,8 +84,8 @@ public class Flea extends ImageView implements GameObject{
         return this.score;
     }
 
-    public void move(boolean input) {
-        if(input) {
+    public void move(boolean val) {
+        if(val) {
             timer.start();
         }
         else {

@@ -4,4 +4,5 @@ public interface GameObject {
     void getMoves(String input);
     int getXPos();
     int getYPos();
+    void move(boolean val);
 }

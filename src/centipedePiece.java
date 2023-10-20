@@ -201,4 +201,10 @@ public class centipedePiece extends ImageView implements GameObject{
     public void setXPos(int x) {
         this.x = x;
     }
+
+    @Override
+    public void move(boolean val) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'move'");
+    }
 }

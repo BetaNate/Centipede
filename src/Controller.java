@@ -145,14 +145,14 @@ public class Controller {
          update = new AnimationTimer() {
             int currLives = ship.getLives();
             int counter = 0;
-            int prev = 0;
+            long prev = 0;
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
             @Override
             public void handle(long now) {
                 Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
                 if (nowDur.minus(lastUpdate).toMillis() > 25) {
                     lastUpdate = nowDur; 
-                    int scoreCounter = game.getScore() - prev;
+                    long scoreCounter = game.getScore() - prev;
                     //Check if no lives
                     //Else, update lives
                     checkDeath(root);
