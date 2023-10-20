@@ -145,12 +145,14 @@ public class Controller {
          update = new AnimationTimer() {
             int currLives = ship.getLives();
             int counter = 0;
+            int prev = 0;
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
             @Override
             public void handle(long now) {
                 Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
                 if (nowDur.minus(lastUpdate).toMillis() > 25) {
                     lastUpdate = nowDur; 
+                    int scoreCounter = game.getScore();
                     //Check if no lives
                     //Else, update lives
                     checkDeath(root);
@@ -158,13 +160,20 @@ public class Controller {
                         this.stop();
                     }
                     else {
-                        if(ship.getLives() != currLives) {
+                        if(ship.getLives() < currLives) {
                             currLives = ship.getLives();
                             respawn.start();
                         }
                     //Add life
-                        if(game.getScore() == 12000) {
-                            ship.setLives(ship.getLives() + 1);
+                        if(scoreCounter != 0 && (scoreCounter % 12000) == 0) {
+                            if(scoreCounter != prev) {
+                                prev = scoreCounter;
+                                currLives = ship.getLives() + 1;
+                                ship.setLives(currLives);
+                            }
+                            else {
+                                return;
+                            }
                         }
                     //Run continuous cleanup on board
                     //Update menu display
