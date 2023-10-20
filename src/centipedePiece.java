@@ -37,7 +37,7 @@ public class centipedePiece extends ImageView implements GameObject{
         this.game = game;
         if(type == "head") {
             this.setImage(headImages[0]);
-            this.score = 150;
+            this.score = 300;
         }
         else {
             this.setImage(bodyImages[0]);

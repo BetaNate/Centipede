@@ -94,13 +94,13 @@ public class Centipede extends Node{
             timer.start();
             Centipede pede = game.spawnCentipede(this.x, this.y, index - 1);
             if (pede != null) {
-            if(this.input == "left")
-            {
-                pede.getCentipede()[0].setInput("right");
-            }
-            else if(this.input == "right") {
-                pede.getCentipede()[0].setInput("left");
-            }
+                if(this.input == "left")
+                {
+                    pede.getCentipede()[0].setInput("right");
+                }
+                else if(this.input == "right") {
+                    pede.getCentipede()[0].setInput("left");
+                }
             }
         }
     }

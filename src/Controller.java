@@ -1,13 +1,12 @@
 //Nathan J. Rowe
-import java.beans.EventHandler;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -16,27 +15,38 @@ import javafx.scene.layout.VBox;
 
 public class Controller {
     
-        private GamePanel game;
-        private Menu menu;
-        KeyCode input = null;
-        AnimationTimer centipedeSpawn;
+        //Game Display
+        private final GamePanel game;
+        private final Menu menu;
+        //AnimationTimer centipedeSpawn;
         private boolean paused = false;
+        private boolean death = false;
+        //Animation timer
         AnimationTimer update;
-        AnimationTimer timer;
+        AnimationTimer respawn;
+        //User Input & Sprite
+        private KeyCode input = null;
+        private String sInput = null;
+        private final Ship ship;
+        //Game Over Display
         Image gameOver = new Image("resources/images/gameover.png");
         Image restartButton = new Image("resources/images/restart.png");
         ImageView gameOverView = new ImageView(gameOver);
         ImageView restart = new ImageView(restartButton);
         VBox gameOverBox = new VBox(gameOverView, restart);
 
-        public Controller(BorderPane root, Canvas field) {
-            this.game = new GamePanel(field, 80);
-            root.setCenter(game);
-            game.initializeField();
-            shipControls(game.getShip());
+        //Constructor
+        public Controller(BorderPane root) {
+            /*    Game Setup    */
+            this.game = new GamePanel(80); //Make a new game
+            root.setCenter(game); //Add game to root
             this.menu = new Menu(game);
             root.setTop(menu);
-            start(root);
+            /*   Initialize User */
+            this.ship = this.game.getShip();
+            shipControls();
+            
+            /*   Game Over Display Setup */
             gameOverBox.setAlignment(Pos.CENTER);
             restart.getStyleClass().add("restart");
             restart.setOnMouseEntered(e -> {
@@ -46,121 +56,121 @@ public class Controller {
                 });
             });
             restart.setOnMouseClicked(e -> {
-                new Controller(root, field);
+                new Controller(root);
             });
+            //Start game
+            start(root);  
         }
 
-        private void shipControls(Ship ship) {
-            ship.setFocusTraversable(true);
-            ship.setOnKeyPressed(e -> {
+        /*   User Input    */
+        private void shipControls() {
+            this.ship.setFocusTraversable(true);
+            this.ship.setOnKeyPressed(e -> {
                 input = e.getCode();
                 if (input == KeyCode.LEFT || input == KeyCode.A) {
-                    move(ship, "left");
+                    sInput = "left";
                 }
                 if (input == KeyCode.RIGHT || input == KeyCode.D) {
-                    move(ship, "right");
+                    sInput = "right";
                 }
                 if(input == KeyCode.UP || input == KeyCode.W) {
-                    move(ship, "up");
+                    sInput = "up";
                 }
                 if(input == KeyCode.DOWN || input == KeyCode.S) {
-                    move(ship, "down");
+                    sInput = "down";
                 }
                 if(input == KeyCode.SPACE) {
-                    move(ship, "space");
+                    sInput = "space";
                 }
+                //Pause game
                 if(input == KeyCode.ESCAPE && !paused) {
-                    paused = true;
-                    ship.setOnKeyPressed(null);
+                    this.paused = true;
+                    this.ship.setOnKeyPressed(null);
                     pause();
                     unpause();
-                    menu.paused(paused);
+                    this.menu.paused(paused);
                 }
+                //Move ship on input
+                this.ship.move(sInput);
+                sInput = null;
             });
         }
-
-        private void pause() {
-            if(paused == true) {
-                for(Centipede centipede : game.getCentipedes()) {
-                    centipede.timer.stop();
-                }
-                timer.stop();
-                update.stop();
-            }
-            else {
-                for(Centipede centipede : game.getCentipedes()) {
-                    centipede.timer.start();
-                }
-                timer.start();
-                update.start();
-            }
-        }
     
-        private boolean checkDeath(BorderPane root) {
-            boolean death = false;
-            if(game.getShip().getLives() < 0) {
+        //Check if ship is out of lives
+        private void checkDeath(BorderPane root) {
+            if(this.ship.getLives() < 0) {
                 death = true;
                 update.stop();
                 game.clear();
                 root.setCenter(gameOverBox);
             }
-            return death;
         }
 
+        //Pause controls;
+        private void pause() {
+            ArrayList<Centipede> centipedes = game.getCentipedes();
+            if(paused == true) {
+                for(Centipede centipede : centipedes) {
+                    centipede.timer.stop();
+                }
+                respawn.stop();
+                update.stop();
+            }
+            else {
+                for(Centipede centipede : centipedes) {
+                    centipede.timer.start();
+                }
+                respawn.start();
+                update.start();
+            }
+            centipedes = null;
+        }
+
+        //Add controls to unpause the game
         private void unpause() {
-            game.getShip().setOnKeyPressed(e -> {
+            this.ship.setOnKeyPressed(e -> {
                 input = e.getCode();
                 if (input == KeyCode.ESCAPE) {
                     paused = false;
                     game.setOnKeyPressed(null);
                     pause();
-                    shipControls(game.getShip());
+                    shipControls();
                     menu.paused(paused);
                 }
             });
         }
 
-        private void move(Node node, String input) {
-            if (node.getClass() == Ship.class) {
-                Ship ship = (Ship) node;
-                ship.move(input);
-            }
-            else if (node.getClass() == Bullet.class) {
-                Bullet bullet = (Bullet) node;
-                bullet.move();
-            }
-            else if (node.getClass() == Flea.class) {
-                Flea spider = (Flea) node;
-                spider.getMoves(game, null);
-            }
-            else {
-                return;
-            }
-        }
-
+        //Method to start the game
         public void start(BorderPane root) {
-         timer = new AnimationTimer() {
-            int currLives = game.getShip().getLives();
+         update = new AnimationTimer() {
+            int currLives = ship.getLives();
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
             @Override
             public void handle(long now) {
                 Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
                 if (nowDur.minus(lastUpdate).toMillis() > 25) {
-                    lastUpdate = nowDur;  
-                    if(checkDeath(root)) {
+                    lastUpdate = nowDur; 
+                    //Check if no lives
+                    //Else, update lives
+                    checkDeath(root);
+                    if(death) {
                         this.stop();
                     }
                     else {
-                    if(game.getShip().getLives() != currLives) {
-                        currLives = game.getShip().getLives();
-                        update.start();
+                        if(ship.getLives() != currLives) {
+                        currLives = ship.getLives();
+                        respawn.start();
                     }
+                    //Add life
                     if(game.getScore() == 12000) {
-                        game.getShip().setLives(game.getShip().getLives() + 1);
+                        ship.setLives(ship.getLives() + 1);
                     }
+                    //Run continuous cleanup on board
+                    //Update menu display
                     game.cleanUp();
                     menu.update();
-                    if(game.getCentipedes().size() == 0) {
+                    //If no centipedes/ spawn a new centipede
+                    if(game.getCentipedes().isEmpty()) {
                         game.spawnCentipede(0, 0, 12);
                     }
                 }
@@ -169,13 +179,13 @@ public class Controller {
             }
         };
 
-        update = new AnimationTimer() {
+        respawn = new AnimationTimer() {
             private Duration lastUpdate = Duration.of(0, ChronoUnit.NANOS);
-            int count = 0;
+            private int count = 0;
             @Override
             public void handle(long now) {
                 Duration nowDur = Duration.of(now, ChronoUnit.NANOS);
-                if (nowDur.minus(lastUpdate).toMillis() > 4000) {
+                if (nowDur.minus(lastUpdate).toMillis() > 1) {
                     if(count >= 300) {
                         game.phase(false);
                         count = 0;
@@ -186,6 +196,7 @@ public class Controller {
                 }
             }
         };
-        timer.start();
+        //Start update timer
+        update.start();
     }
 }
