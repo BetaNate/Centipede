@@ -1,0 +1,26 @@
+.menuText {
+    -fx-font-family: 'sans-serif';
+    -fx-text-fill: red;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.menu {
+    -fx-background-color: black;
+    -fx-alignment: center;
+}
+
+.border {
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-color: grey;
+}
+.background-black{
+    -fx-background-color: black;
+}
+
+.restart {
+    -fx-graphic: url('/resources/images/restart.png');
+    -fx-margin: 10px;
+    -fx-content-display: graphic-only;
+    -fx-cursor: hand;
+}

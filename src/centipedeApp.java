@@ -1,7 +1,12 @@
-//Nathan J. Rowe
+/*
+ * Author: Nathan J. Rowe
+ * Main Class
+ * Launches the application
+ */
+
+//For JavaFX
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.Scene;
 
@@ -10,14 +15,18 @@ public class centipedeApp extends Application{
         launch(args);
     }
 
-    final BorderPane root = new BorderPane();
+    //Root pane
+    private final BorderPane root = new BorderPane();
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //Set up the stage
         primaryStage.setTitle("Centipede");
-        Canvas field = new Canvas(80, 300);
-        Controller controller = new Controller(root, field);
+        root.getStyleClass().add("background-black");
+        new Controller(root);
+        //Set up the scene
         Scene scene = new Scene(root);
-
+        scene.getStylesheets().add("resources/css/style.css");
+        //Add the scene to the stage
         primaryStage.setMinHeight(400);
         primaryStage.setMinWidth(100); 
         primaryStage.setResizable(false);
