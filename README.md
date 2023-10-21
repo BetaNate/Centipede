@@ -1,5 +1,5 @@
 ## Name
-CS 351L Fall 2023 Project 3: Centipede
+CS 351L Fall 2023 Project 3: Centipede<br>
 Author: Nathan J. Rowe
 
 ## Description
