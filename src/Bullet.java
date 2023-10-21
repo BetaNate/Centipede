@@ -115,14 +115,15 @@ public class Bullet extends ImageView implements GameObject{
             else if(target == "Centipede"){
                 //Code to remove a centipede part
                 Centipede pede = game.getCentipede(x, y);
+                game.getCanvas()[x][y].setUserData("Empty");
                 //If pede is null, then centipede is dead
                 //Set cell to empty to prevent unwanted collisions
                 if(pede == null) {
-                    game.getCanvas()[x][y].setUserData("Empty");
+                    return;
                 }
                 else {
                     //Get array of centipede parts
-                    centipedePiece[] centipede = pede.getCentipede();
+                    centipedePiece[] centipede = pede.getArray();
                     //Loop through array to find the centipede part that was hit
                     for(int i = 0; i < centipede.length; i++) {
                         if(centipede[i].getXPos() == x && centipede[i].getYPos() == y) {

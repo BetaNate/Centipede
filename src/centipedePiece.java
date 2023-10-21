@@ -1,40 +1,63 @@
-//Nathan J. Rowe
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
+/*
+ * Author: Nathan J. Rowe
+ * CentipedePiece Class
+ * CentipedePiece is a piece of the centipede
+ * Used in Centipede.java
+ */
 
-import javafx.animation.AnimationTimer;
+ //For Image
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+
 
 public class centipedePiece extends ImageView implements GameObject{
+    //CentipedePiece position
     private int x, y;
+    //CentipedePiece type
     private String type;
+    //Target for collision
     private String target;
+    //CentipedePiece direction, up or down
+    //Only used for head
     private String currDirection = "down";
-    private final GamePanel game;
-    private int score;
+    //CentipedePiece input, left or right
+    //Only used for head
     private String input = "right";
-    AnimationTimer timer;
+    //GamePanel reference
+    private final GamePanel game;
+    //CentipedePiece score
+    private int score;
+    //CentipedePiece disabled value
+    //Used for when centipedePiece hits user
     private boolean disabled = false;
+    //Current image for animation
     private int currImage = 0;
 
+    //Images for head
     Image head1 = new Image("resources/images/head1.png");
     Image head2 = new Image("resources/images/head2.png");
     Image head3 = new Image("resources/images/head3.png");
     Image[] headImages = new Image[] {head1, head2, head3};
+    //Images for body (tail pieces)
     Image body1 = new Image("resources/images/body1.png");
     Image body2 = new Image("resources/images/body2.png");
     Image body3 = new Image("resources/images/body3.png");
     Image[] bodyImages = new Image[] {body1, body2, body3};
 
+/*
+* ------------------------
+*       Constructor
+* ------------------------
+* Input: Current Game, x position, y position, type
+*/
     public centipedePiece(GamePanel game, int x, int y, String type) {
+        //Set properties
         this.x = x;
         this.y = y;
         this.type = type;
         this.game = game;
+        //Set Image Set
         if(type == "head") {
             this.setImage(headImages[0]);
             this.score = 300;
@@ -43,14 +66,19 @@ public class centipedePiece extends ImageView implements GameObject{
             this.setImage(bodyImages[0]);
             this.score = 100;
         }
+        //Add to game
         game.getCanvas()[x][y].setUserData("Centipede");
         game.add(this, y, x);
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+/*
+ * ------------------------
+ *    Collision Handling
+ * ------------------------
+ */
 
+    //Method for handling collision
+    //Input: Target of collision
     public void handleCollision(String target) {
         if(target == "Mushroom") {
             if(this.input == "right") {
@@ -66,9 +94,17 @@ public class centipedePiece extends ImageView implements GameObject{
         }
     }
 
+/*
+ * ------------------------
+ *        MOVEMENT
+ * ------------------------
+ */
+    //Method for getting moves
     public void getMoves(String input) {
+        //Get current direction
         input = this.input;
         this.updateData();
+        //Check if at edge of screen
         if (this.y <= 0 && input == "left") {
             this.input = "right";
             advance();
@@ -78,7 +114,9 @@ public class centipedePiece extends ImageView implements GameObject{
             advance();
         }
         else {
+            //Handle normal movement
             switch(input) {
+                //Move left
                 case "left":
                     target = game.getCanvas()[x][y - 1].getUserData().toString();
                     if(target == "Mushroom") {
@@ -88,6 +126,7 @@ public class centipedePiece extends ImageView implements GameObject{
                         this.y--;
                     }
                     break;
+                //Move right
                 case "right":
                     target = game.getCanvas()[x][y + 1].getUserData().toString();
                     if(target == "Mushroom") {
@@ -98,14 +137,16 @@ public class centipedePiece extends ImageView implements GameObject{
                     }
                     break;
                 default:
-                    System.out.println("No Move ?!");
                     break;
             }
         }
+        //Update position
         game.setColumnIndex(this, this.y);
         this.updateData();
     }
 
+    //Method for advancing centipedePiece
+    //Moves up or down depending on current direction
     public void advance() {
         if(currDirection == "up") {
             if (x <= 0) {
@@ -125,23 +166,12 @@ public class centipedePiece extends ImageView implements GameObject{
                 this.x++;
             }
         }
+        //Update position
         game.setRowIndex(this, x);
     }
 
-    public void disable(boolean val) {
-        if(val == true) {
-            this.setEffect(new ColorAdjust(0, 0, -0.5, 0));
-        }
-        else {
-            this.setEffect(null);
-        }
-        this.disabled = val;
-    }
-
-    public int getScore() {
-        return this.score;
-    }
-
+    //Method for updating data
+    //Used to handle image changes and collisions
     public void updateData() {
         String data = game.getCanvas()[x][y].getUserData().toString();
         if(currImage >= 2) {
@@ -181,6 +211,28 @@ public class centipedePiece extends ImageView implements GameObject{
         }
     }
 
+
+/*
+ * ------------------------
+ *   GETTERS AND SETTERS
+ * ------------------------
+ */
+    //Change color if disabled 
+    public void disable(boolean val) {
+        if(val == true) {
+            this.setEffect(new ColorAdjust(0, 0, -0.5, 0));
+        }
+        else {
+            this.setEffect(null);
+        }
+        //Set disabled value
+        this.disabled = val;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
+
     public String getInput() {
         return this.input;
     }
@@ -202,7 +254,11 @@ public class centipedePiece extends ImageView implements GameObject{
         this.x = x;
     }
 
-    @Override
+    /*
+     * ------------------------
+     *      UNUSED METHODS
+     * ------------------------
+     */
     public void move(boolean val) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'move'");
