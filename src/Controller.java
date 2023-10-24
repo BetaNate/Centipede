@@ -122,7 +122,7 @@ public class Controller {
         }
         else {
             for(Centipede centipede : centipedes) {
-                centipede.move(false);
+                centipede.move(true);
             }
             respawn.start();
             update.start();
